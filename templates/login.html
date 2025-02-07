@@ -8355,11 +8355,93 @@ textarea.form-control {
         background: #fbceb5;
         color: #fff; }
 
+
+/* Toast Container */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1055; /* Ensure it stays above other elements */
+}
+
+/* Toast Box */
+.toast {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    min-width: 250px;
+    max-width: 350px;
+    animation: slideIn 0.5s ease;
+    opacity: 0.95;
+}
+
+/* Toast Header */
+.toast-header {
+    font-weight: bold;
+    font-size: 16px;
+    padding: 8px 12px;
+}
+
+/* Toast Body */
+.toast-body {
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Success Toast */
+.toast.bg-success {
+    background-color: #28a745 !important;  /* Green */
+    color: #fff;
+    border-left: 5px solid #1e7e34;
+}
+
+/* Error Toast */
+.toast.bg-danger {
+    background-color: #dc3545 !important;  /* Red */
+    color: #fff;
+    border-left: 5px solid #bd2130;
+}
+
+/* Close Button */
+.btn-close {
+    filter: invert(1); /* White close button */
+    opacity: 0.8;
+}
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+    .toast {
+        max-width: 100%;
+    }
+}
+
+
 	</style>
 	
 	</head>
 	<body class="img js-fullheight" style="background-image: url(/static/images/bg.jpg);">
-        <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
             <div class="container">
                 <a class="navbar-brand" href="/index">SN | Tours</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
@@ -8434,11 +8516,34 @@ textarea.form-control {
 			</div>
 		</div>
 	</section>
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    {% if error %}
+        <div class="toast bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Error</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">{{ error }}</div>
+        </div>
+    {% endif %}
 
-	<!--<script src="js/jquery.min.js"></script>
-  <script src="js/popper.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/main.js"></script>-->
+    {% if success %}
+        <div class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">{{ success }}</div>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('.toast').forEach(toast => {
+        new bootstrap.Toast(toast).show();
+    });
+</script>
 
 	</body>
 </html>
