@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect,url_for, session
+from flask import Flask, render_template, request, redirect,url_for, session, flash
 #from pymongo import MongoClient
 import functions
 import database
@@ -15,37 +15,40 @@ def homePage():
         return render_template('home.html', msg="")
     
     return render_template('home.html')
-
+                    
+                    
 @app.route("/login", methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         value = functions.login_user()
 
         if value == 'not':
-            return render_template('Login.html', msg="Username does not exist")
-        
-        print("hello world", value)
+            session['error'] = "Username does not exist"
+            return redirect(url_for('login'))
 
         if value == "admin":
-            # Redirect or render a page specific for admin
-            print("admin")
-            return redirect(url_for('adminhome'))  # Replace 'admin_dashboard' with your admin page/route
-        
+            return redirect(url_for('adminhome'))
+
         if value == "tuser":
-            return redirect(url_for('index'))  # Redirect to the user homepage
-        
-        # If passwords are incorrect or any other case
-        return render_template('Login.html', msg="Incorrect username or password")
+            session['success'] = "Login successful!"  # Set the success message
+            return redirect(url_for('index'))  # Redirect to the index page
 
-    # GET request, render login page
-    return render_template('Login.html', msg="")
+        session['error'] = "Incorrect username or password"
+        return redirect(url_for('login'))
+
+    # For GET requests
+    success = session.pop('success', None)
+    error = session.pop('error', None)
+    return render_template('login.html', success=success, error=error)
 
 
 
-@app.route("/index",methods=['POST','GET'])
+
+@app.route("/index", methods=['GET', 'POST'])
 def index():
+    success = session.pop('success', None)  # Retrieve the success message
+    return render_template('index.html', success=success)
 
-    return render_template('index.html',msg=" ")
 
 
 @app.route("/adminhome",methods=['POST','GET'])
@@ -57,15 +60,21 @@ def adminhome():
 @app.route("/register",methods=['POST','GET'])
 def register():
     if request.method == 'POST':
-        value=functions.register_func()   
-        if value=='not match':
-            return render_template('register.html', msg=" password not matched")   
-        if not value:
-            return render_template('register.html',msg="User already exist")
-       
-        return redirect('/login')
+        value = functions.register_func()
 
-    return render_template('register.html', msg="")
+        if value == 'not match':
+            session['error'] = "Passwords do not match"
+            return redirect(url_for('register'))
+
+        if not value:
+            session['error'] = "User already exists"
+            return redirect(url_for('register'))
+
+        session['success'] = "Registration successful! Please log in."
+        return redirect(url_for('login'))
+
+    error = session.pop('error', None)
+    return render_template('register.html', error=error)
 
 @app.route("/about",methods=['POST','GET'])
 def about():

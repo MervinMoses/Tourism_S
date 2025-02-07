@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 # create table users (id int identity(1,1) primary key,username varchar(50),email varchar(100),password varchar(max),ispremium varchar(10) default 'false')
 
-SERVER='DESKTOP-14J830G\SQLEXPRESS'
+SERVER='DESKTOP-14J830G\SQLEXPRESS'   # Change to your system DB
 DATABASE='tourism'
 connectionString = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SERVER};DATABASE={DATABASE}; Trusted_Connection=yes;'
 conn = pyodbc.connect(connectionString)
