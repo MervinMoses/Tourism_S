@@ -134,7 +134,7 @@ def add_enquiry(request):
     # Insert the enquiry into the database
     database.insert_enquiry(name, email, description)
 
-    return "enquiry added successfully!"
+    return "success"
 
 # def get_guest_enquiries():
 #     try:

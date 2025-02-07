@@ -10,11 +10,21 @@ app.secret_key = 'your_secret_key'
 
 @app.route('/', methods=['POST', 'GET'])
 def homePage():
+    # Retrieve messages from the session
+    success = session.pop('success', None)
+    error = session.pop('error', None)
+
     if request.method == 'POST':
         result = functions.add_enquiry(request)
-        return render_template('home.html', msg="")
-    
-    return render_template('home.html')
+
+        if result == "success":  # Assuming add_enquiry returns 'success' on success
+            session['success'] = "Enquiry submitted successfully!"
+        else:
+            session['error'] = "Failed to submit enquiry. Please try again."
+
+        return redirect(url_for('homePage'))  # Redirect to the same page
+
+    return render_template('home.html', success=success, error=error)
                     
                     
 @app.route("/login", methods=['POST', 'GET'])
@@ -53,8 +63,8 @@ def index():
 
 @app.route("/adminhome",methods=['POST','GET'])
 def adminhome():
-
-    return render_template('adminhome.html',msg=" ")
+    success = session.pop('success', None)  # Retrieve the success message
+    return render_template('adminhome.html',msg=" ",success=success)
 
 
 @app.route("/register",methods=['POST','GET'])
